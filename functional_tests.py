@@ -25,7 +25,7 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
     
-    def testCheckHomePage(self):
+    def test_check_home_page(self):
 
         # I open the Todo app to check out its homepage
         self.browser.get("http://localhost:8000")
