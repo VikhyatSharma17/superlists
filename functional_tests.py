@@ -41,7 +41,7 @@ class NewVisitorTest(unittest.TestCase):
         # I get an option to add a new list item after I open the page
         inputBox = self.browser.find_element(
             By.ID,
-            'id_new_item'
+            'new_item'
         )
         self.assertEqual(
             inputBox.get_attribute('placeholder'),
@@ -57,23 +57,33 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element(
             By.ID,
-            'id_list_table'
+            'list_table'
         )
         rows = table.find_elements(
             By.TAG_NAME,
             'tr'
         )
-        self.assertTrue(
-            any(rows.text == "1: Watch some interesting anime")
+        self.assertIn("1: Watch some interesting anime", [row.text for row in rows])
+
+        # I still get an option to add another item and add other item "Watch Steins;Gate 0 anime"
+        inputBox = self.browser.find_element(By.ID, 'new_item')
+        self.assertEqual(
+            inputBox.get_attribute('placeholder'),
+            'Enter a To-Do item'
         )
+        inputBox.send_keys("Watch Steins;Gate 0 anime")
+        inputBox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
+        # The page updates again and the item gets added and shows both items
+        table = self.browser.find_element(By.ID, 'list_table')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+        self.assertIn("1: Watch some interesting anime", [row.text for row in rows])
+        self.assertIn("2: Watch Steins;Gate 0 anime", [row.text for row in rows])
 
+        
         self.fail("Complete the test")
 
-
-# I still get an option to add another item and add other item "Watch Steins;Gate 0 anime"
-
-# The page updates again and the item gets added and shows both items
 
 # The page shows a unique URL for the list which opens the list in the browser
 
