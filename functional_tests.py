@@ -24,6 +24,12 @@ class NewVisitorTest(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+    def check_for_row_in_table(self, row_to_check):
+        table = self.browser.find_element(By.ID, 'list_table')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+        self.assertIn(row_to_check, [row.text for row in rows])
+
     
     def test_check_home_page(self):
 
@@ -39,10 +45,7 @@ class NewVisitorTest(unittest.TestCase):
         self.assertIn('To-Do', headerText)
 
         # I get an option to add a new list item after I open the page
-        inputBox = self.browser.find_element(
-            By.ID,
-            'new_item'
-        )
+        inputBox = self.browser.find_element(By.ID, 'new_item')
         self.assertEqual(
             inputBox.get_attribute('placeholder'),
             'Enter a To-Do item'
@@ -54,16 +57,7 @@ class NewVisitorTest(unittest.TestCase):
         # After hitting enter, the list gets updated and shows the entered item
         inputBox.send_keys(Keys.ENTER)
         time.sleep(1)
-
-        table = self.browser.find_element(
-            By.ID,
-            'list_table'
-        )
-        rows = table.find_elements(
-            By.TAG_NAME,
-            'tr'
-        )
-        self.assertIn("1: Watch some interesting anime", [row.text for row in rows])
+        self.check_for_row_in_table("1: Watch some interesting anime")
 
         # I still get an option to add another item and add other item "Watch Steins;Gate 0 anime"
         inputBox = self.browser.find_element(By.ID, 'new_item')
@@ -76,10 +70,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # The page updates again and the item gets added and shows both items
-        table = self.browser.find_element(By.ID, 'list_table')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-        self.assertIn("1: Watch some interesting anime", [row.text for row in rows])
-        self.assertIn("2: Watch Steins;Gate 0 anime", [row.text for row in rows])
+        self.check_for_row_in_table("1: Watch some interesting anime")
+        self.check_for_row_in_table("2: Watch Steins;Gate 0 anime")
 
         
         self.fail("Complete the test")
