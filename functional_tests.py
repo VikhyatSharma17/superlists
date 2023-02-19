@@ -56,7 +56,7 @@ class NewVisitorTest(unittest.TestCase):
 
         # After hitting enter, the list gets updated and shows the entered item
         inputBox.send_keys(Keys.ENTER)
-        time.sleep(1)
+        time.sleep(5)
         self.check_for_row_in_table("1: Watch some interesting anime")
 
         # I still get an option to add another item and add other item "Watch Steins;Gate 0 anime"
