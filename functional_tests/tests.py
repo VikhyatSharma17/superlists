@@ -3,10 +3,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 
 from django.test import LiveServerTestCase
 
-import unittest
 import time
 
 # # I open my Todo app to check out its homepage
@@ -14,6 +14,8 @@ import time
 
 # # I check the page title and it mentions To-do lists
 # assert "To-Do" in browser.title, f"Browser title was: {browser.title}"
+
+MAX_WAIT = 10
 
 class NewVisitorTest(LiveServerTestCase):
 
@@ -23,12 +25,19 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def check_for_row_in_table(self, row_to_check):
-        table = self.browser.find_element(By.ID, 'list_table')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-        self.assertIn(row_to_check, [row.text for row in rows])
+    def wait_for_row_in_table(self, row_to_check):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element(By.ID, 'list_table')
+                rows = table.find_elements(By.TAG_NAME, 'tr')
+                self.assertIn(row_to_check, [row.text for row in rows])
+                return True
+            except (WebDriverException, AssertionError) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
-    
     def test_check_home_page(self):
 
         # I open the Todo app to check out its homepage
@@ -54,8 +63,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # After hitting enter, the list gets updated and shows the entered item
         inputBox.send_keys(Keys.ENTER)
-        time.sleep(5)
-        self.check_for_row_in_table("1: Watch some interesting anime")
+        self.wait_for_row_in_table("1: Watch some interesting anime")
 
         # I still get an option to add another item and add other item "Watch Steins;Gate 0 anime"
         inputBox = self.browser.find_element(By.ID, 'new_item')
@@ -65,11 +73,10 @@ class NewVisitorTest(LiveServerTestCase):
         )
         inputBox.send_keys("Watch Steins;Gate 0 anime")
         inputBox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # The page updates again and the item gets added and shows both items
-        self.check_for_row_in_table("1: Watch some interesting anime")
-        self.check_for_row_in_table("2: Watch Steins;Gate 0 anime")
+        self.wait_for_row_in_table("1: Watch some interesting anime")
+        self.wait_for_row_in_table("2: Watch Steins;Gate 0 anime")
 
         
         self.fail("Complete the test")
@@ -78,6 +85,3 @@ class NewVisitorTest(LiveServerTestCase):
 # The page shows a unique URL for the list which opens the list in the browser
 
 # browser.quit()
-
-# if __name__ == '__main__':
-#     unittest.main()
