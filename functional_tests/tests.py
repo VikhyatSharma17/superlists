@@ -4,12 +4,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+from django.test import LiveServerTestCase
+
 import unittest
 import time
-
-# chromeService = Service("static/chromedriver.exe")
-# browser = webdriver.Chrome(service=chromeService)
-
 
 # # I open my Todo app to check out its homepage
 # browser.get("http://localhost:8000")
@@ -17,7 +15,7 @@ import time
 # # I check the page title and it mentions To-do lists
 # assert "To-Do" in browser.title, f"Browser title was: {browser.title}"
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome(service=Service('static/chromedriver.exe'))
@@ -34,7 +32,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_check_home_page(self):
 
         # I open the Todo app to check out its homepage
-        self.browser.get("http://localhost:8000")
+        self.browser.get(self.live_server_url)
 
         # I check the page title and that it mentions To-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -81,5 +79,5 @@ class NewVisitorTest(unittest.TestCase):
 
 # browser.quit()
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
