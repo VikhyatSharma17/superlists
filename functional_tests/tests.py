@@ -21,7 +21,6 @@ class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome(service=Service('static/chromedriver.exe'))
-        self.client
 
     def tearDown(self):
         self.browser.quit()
@@ -88,6 +87,7 @@ class NewVisitorTest(LiveServerTestCase):
         ## We create a new browser session to add her list items and 
         ## make sure that my list is not present for her
         self.browser.quit()
+        self.browser = webdriver.Chrome(service=Service('static/chromedriver.exe'))
 
         # My sister visits the homepage and there is no sign of my list
         self.browser.get(self.live_server_url)
