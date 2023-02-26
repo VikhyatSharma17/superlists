@@ -111,5 +111,3 @@ class NewVisitorTest(LiveServerTestCase):
 
 
 # The page shows a unique URL for the list which opens the list in the browser
-
-# browser.quit()
