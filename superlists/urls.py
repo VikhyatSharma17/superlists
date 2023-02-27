@@ -22,5 +22,5 @@ from lists import urls as list_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^$', list_views.home_page, name='home'),
-    path('lists/', include(list_urls)),
+    path('lists/', include(list_urls, namespace='lists')),
 ]

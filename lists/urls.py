@@ -17,10 +17,10 @@ from django.urls import path, re_path
 
 from lists import views
 
-name = 'views'
+app_name = 'lists'
 
 urlpatterns = [
     re_path(r'^new$', views.new_list, name='new_list'),
-    re_path(r'^(\d+)/$', view=views.view_list, name='view_list'),
-    re_path(r'^(\d+)/add-item$', view=views.add_item, name='add_item'),
+    path('<int:list_id>/', view=views.view_list, name='view_list'),
+    path('<int:list_id>/add-item', view=views.add_item, name='add_item'),
 ]
