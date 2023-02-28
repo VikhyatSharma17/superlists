@@ -87,6 +87,7 @@ class NewVisitorTest(LiveServerTestCase):
         ## We create a new browser session to add her list items and 
         ## make sure that my list is not present for her
         self.browser.quit()
+        print("Completed the test for my list. Now moving to my sister's")
         self.browser = webdriver.Chrome(service=Service('static/chromedriver.exe'))
 
         # My sister visits the homepage and there is no sign of my list
@@ -95,6 +96,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn("Watch some interesting anime", full_page_text)
 
         # My sister adds a new item to the list
+        # And verifies it is centered as well
         input_text = self.browser.find_element(By.ID, 'new_item')
         input_text.send_keys("Watch vlogs on YouTube")
         input_text.send_keys(Keys.ENTER)
@@ -109,5 +111,19 @@ class NewVisitorTest(LiveServerTestCase):
         full_page_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertNotIn("Watch some interesting anime", full_page_text)
 
+    def test_layout_and_styling(self):
+        # I go to the homepage
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
 
-# The page shows a unique URL for the list which opens the list in the browser
+        # I notice the input box is nicely centered
+        input_box = self.browser.find_element(By.ID, 'new_item')
+        input_box.send_keys('Test list item')
+        input_box.send_keys(Keys.ENTER)
+        input_box = self.browser.find_element(By.ID, 'new_item')
+        self.wait_for_row_in_table(row_text='1: Test list item')
+        self.assertAlmostEqual(
+            input_box.location['x'] + input_box.size['width']//2,
+            512,
+            delta=20
+        )
